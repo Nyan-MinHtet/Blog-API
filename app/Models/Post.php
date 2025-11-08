@@ -14,8 +14,8 @@ class Post extends Model
         'content',
         'status',
         'user_id',
-        'series_id'
-
+        'series_id',
+        'category_id'
     ];
     public function user(){
         return $this->belongsTo(User::class);

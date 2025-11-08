@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,9 +17,10 @@ class SeriesFactory extends Factory
      */
     public function definition(): array
     {
+        $titleName = fake()->word();
         return [
-            'title' => fake()->name,
-            'slug' =>fake()->slug
+            'title' => $titleName,
+            'slug' => Str::slug($titleName),
         ];
     }
 }

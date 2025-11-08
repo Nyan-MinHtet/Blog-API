@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,8 +20,8 @@ class CommentFactory extends Factory
     {
         return [
         'body'      => fake()->text,
-        'post_id'   => rand(1, 60),
-        'user_id'   => rand(1,10),
+        'post_id'   => Post::factory(),
+        'user_id'   => User::factory(),
         ];
     }
 }
