@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('status', ['Public' , 'Private']);
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('series_id')->references('id')->on('series')->onDelete('cascade');
-            $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }
