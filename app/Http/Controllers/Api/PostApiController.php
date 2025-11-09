@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Post;
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\PostValidateRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Helper\FormatterHelper;
 
 class PostApiController extends Controller
 {
@@ -17,7 +21,7 @@ class PostApiController extends Controller
      */
     public function index()
     {
-        $posts = Post::all()->where('status', 'Public');
+        $posts = Post::where('status', 'Public')->get();
 
         return $this->successResponse(
             'Success',
@@ -29,33 +33,13 @@ class PostApiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostValidateRequest $request)
     {
-        $rule = [
-            'title'         => 'required', 
-            'content'       => 'required',
-            'user_id'       => 'required',
-        ];
-        $validator = Validator::make($request->all(), $rule);
+        $validated = $request->validated();
+        $validated['user_id'] = Auth::id();
+        $validated['slug'] = Str::slug($validated['title']);
 
-        if ($validator->fails()) {
-            return $this->errorResponse($validator->errors(), 400);
-        }
-
-        $title = $request->title;
-        $slug = Str::slug($title);
-
-        $validated = $validator->validate();
-        
-        $data = [
-            'title'         => $validated['title'],
-            'slug'          => $slug,
-            'content'       => $validated['content'],
-            'user_id'       => $validated['user_id'],
-            'series_id'     => $request->series_id,
-            'category_id'   => $request->category_id,
-        ];
-        $recentlyPosted = Post::create($data);
+        $recentlyPosted = Post::create($validated);
 
         return $this->successResponse('success', $recentlyPosted,201);
     }
@@ -71,9 +55,25 @@ class PostApiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(PostValidateRequest $request, Post $post)
     {
-        //
+        try{
+            $validated = $request->validated();
+            $validated['user_id'] = Auth::id();
+        if ($validated['title'] !== $post->title) {
+            $title = $validated['title'];
+            $validated['slug'] = Str::slug($title);
+        }
+        $post->update($validated);
+        }catch(Exception $error){
+            return $this->errorResponse($error->getMessage());
+        };
+        
+        return $this->successResponse(
+            'Post updated successfully!',
+            $post,
+            200
+        );
     }
 
     /**
@@ -83,6 +83,21 @@ class PostApiController extends Controller
     {
         //
     }    
+    
+    private function validation($data){
+        $rule = [
+            'title'         => 'required', 
+            'content'       => 'required',
+            'user_id'       => 'required',
+            'status'        => 'sometimes | in:Public,Private',
+        ];
+        $validator = Validator::make($data, $rule);
+        $validated = $validator->validated();
+        if ($validator->fails()) {
+            return $this->errorResponse($validator->errors(), 400);
+        }
+        return $validated;
+    }
 }
 
 
