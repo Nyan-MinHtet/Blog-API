@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\PostValidateRequest;
+use App\Http\Resources\Api\Author\PostResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Console\Helper\FormatterHelper;
@@ -21,13 +22,13 @@ class PostApiController extends Controller
      */
     public function index()
     {
-        $posts = Post::where('status', 'Public')->get();
+        $posts = Post::where('status', 'Public')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(config('pagination.perPage'));
 
         return $this->successResponse(
-            'Success',
-            $posts,
-            200
-        );
+            'Post retreived successfully!',
+            $this->buildPaginatedResponse(PostResource::class,$posts));
     }
 
     /**
