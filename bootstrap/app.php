@@ -1,9 +1,16 @@
 <?php
 
-use App\Http\Middleware\RoleCheckMiddleware;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use App\Http\Middleware\RoleCheckMiddleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Http\Helpers\Exception\Handler\ApiExceptionResponseHelper;
+
+
+
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,5 +25,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+
+        //ModelNotFoundException 
+        $exceptions->render(function (ModelNotFoundException|NotFoundHttpException $e, Request $request) 
+        {
+            $response = new ApiExceptionResponseHelper();
+            if ($request->is('api/*')) {
+                return $response->BadRequestErrorResponse(
+                    "Content Not found!",
+                    404
+                );
+            }
+            return null;
+        });
     })->create();

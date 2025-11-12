@@ -16,20 +16,17 @@ trait ApiResponse{
         ], $status);
     }
 
-    /**
-     * UPDATED to accept a new '$errors' parameter.
-     * This allows us to send back validation errors.
-     */
-    protected function errorResponse($message='bad request', $status=400, $errors = null){
+
+    public function BadRequestErrorResponse($message = null, $status = 400, $errors = null){
+        return $this->errorResponse($message, $status, $errors);
+    }
+    protected function errorResponse($message='bad request', $status = 400, $errors = null){
         
-        // Start with the basic error response
         $response = [
             'success' => false,
             'message' => $message,
             'status' => $status,
         ];
-
-        // If an '$errors' array is provided, add it to the response.
         if($errors) {
             $response['errors'] = $errors;
         }

@@ -50,7 +50,7 @@ class PostApiController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return $this->successResponse('Post retrieved successfully!', $post, 200);
     }
 
     /**
@@ -84,21 +84,6 @@ class PostApiController extends Controller
     {
         //
     }    
-    
-    private function validation($data){
-        $rule = [
-            'title'         => 'required', 
-            'content'       => 'required',
-            'user_id'       => 'required',
-            'status'        => 'sometimes | in:Public,Private',
-        ];
-        $validator = Validator::make($data, $rule);
-        $validated = $validator->validated();
-        if ($validator->fails()) {
-            return $this->errorResponse($validator->errors(), 400);
-        }
-        return $validated;
-    }
 }
 
 
