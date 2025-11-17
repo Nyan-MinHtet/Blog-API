@@ -29,6 +29,7 @@ class PostApiController extends Controller
      */
     public function show(Post $post)
     {
+        $this->authorize('show', $post);
         return $this->successResponse('Post retrieved successfully!', $post, 200);
     }
 
