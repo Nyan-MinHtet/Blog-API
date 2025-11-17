@@ -32,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //Authorize
         $exceptions->render(function(AccessDeniedHttpException $accessDeniedHttpException, Request $request){
             if ($request->is('api/*')) {
-                return apiResponse(new ApiExceptionResponseHelper, 'You do not have permission to perform this action.', 403);
+                return apiResponse(new ApiExceptionResponseHelper, $accessDeniedHttpException->getMessage(), 403);
             }
         });
         //ModelNotFoundException 

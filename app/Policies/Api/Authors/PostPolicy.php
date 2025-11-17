@@ -18,6 +18,22 @@ class PostPolicy
     {
         return true;
     }
+    /**
+     * Determine whether the user can search Private posts
+     */
+    public function show(User $user, Post $post)
+    {
+        if ($post->user_id !== $user->id) {
+            return $post->status === 'Private'
+            ? Response::deny('Post not found!')
+            : Response::allow();
+
+        }
+        if ($post->user_id === $user->id) {
+            return Response::allow();
+        }
+        
+    }
 
     /**
      * Determine whether the user can update the model.
