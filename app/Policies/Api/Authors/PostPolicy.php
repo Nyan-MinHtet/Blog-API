@@ -14,9 +14,11 @@ class PostPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+   public function addComment(User $user, Post $post)
     {
-        return true;
+        return $post->status === 'Private'
+        ? Response::deny("You can't comment to this post!")
+        : Response::allow() ;
     }
     /**
      * Determine whether the user can search Private posts

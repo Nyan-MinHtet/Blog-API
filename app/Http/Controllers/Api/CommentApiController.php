@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Helpers\ApiResponse;
-use App\Http\Resources\Api\Author\CommentResource;
+use App\Models\Post;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Http\Helpers\ApiResponse;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Helpers\CommentValidateRequest;
+use App\Http\Resources\Api\Author\CommentResource;
 
 class CommentApiController extends Controller
 {
@@ -23,9 +26,17 @@ class CommentApiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CommentValidateRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $post = Post::find($validated['post_id']);
+        if (!$post) {
+            return $this->errorResponse('Post not found!', 404);
+        }
+        $this->authorize('addComment', $post);
+        $validated['user_id'] = Auth::id();
+        $comment = Comment::create($validated);
+        return $this->successResponse(content: $comment, status: 201);
     }
 
     /**
