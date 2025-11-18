@@ -29,12 +29,15 @@ class CommentApiController extends Controller
     public function store(CommentValidateRequest $request)
     {
         $validated = $request->validated();
-        $post = Post::find($validated['post_id']);
-        if (!$post) {
+        if ($request->post_id) {
+            $post = Post::find($request->post_id);
+            if (!$post) {
             return $this->errorResponse('Post not found!', 404);
+        }
         }
         $this->authorize('addComment', $post);
         $validated['user_id'] = Auth::id();
+        $validated['post_id'] = $request->post_id;
         $comment = Comment::create($validated);
         return $this->successResponse(content: $comment, status: 201);
     }
@@ -42,9 +45,12 @@ class CommentApiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comment $comment)
+    public function update(CommentValidateRequest $request, Comment $comment)
     {
-        //
+        $validated = $request->validated();
+        $this->authorize('update' , $comment);
+        $comment->update($validated);
+        return $this->successResponse(content: $comment , status: 200);
     }
 
     /**

@@ -12,8 +12,7 @@ class CommentValidateRequest extends FormRequest{
     public function rules() : array 
     {
         $rules = [
-            'body' => 'required',
-            'post_id' => 'required',
+            'body' => 'required'
         ];
         return $rules;
     }
