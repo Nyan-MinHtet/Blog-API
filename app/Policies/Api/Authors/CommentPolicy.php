@@ -22,9 +22,11 @@ class CommentPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Comment $comment): bool
+    public function delete(User $user, Comment $comment): Response
     {
-        return false;
+        return $comment->user_id === $user->id
+        ? Response::allow()
+        : Response::deny() ;
     }
 
 }
