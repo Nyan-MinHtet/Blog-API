@@ -58,6 +58,8 @@ class CommentApiController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        $this->authorize('delete', $comment);
+        $comment->delete();
+        return $this->successResponse(status:200);
     }
 }
