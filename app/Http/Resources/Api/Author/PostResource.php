@@ -20,9 +20,11 @@ class PostResource extends JsonResource
             'slug'          => $this->slug,
             'content'       => $this->content,
             'status'        => $this->status,
-            'user_id'       => $this->user_id,
-            'series_id'     => $this->series_id,
-            'category_id'   => $this->category_id
+            'user'          => $this->whenLoaded('user' , fn($user) => $user->name),
+            'series'        => $this->whenLoaded('series',  fn($series) => $series->title),
+            'category'      => $this->whenLoaded('category', fn($category) => $category->name),
+            'createdAt'     => $this->created_at,
+            'updatedAt'    => $this->updated_at
         ];
     }
 }

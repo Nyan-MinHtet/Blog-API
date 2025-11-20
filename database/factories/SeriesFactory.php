@@ -19,7 +19,7 @@ class SeriesFactory extends Factory
     {
         $titleName = fake()->word();
         return [
-            'title' => $titleName,
+            'title' => ucfirst($titleName),
             'slug' => Str::slug($titleName),
         ];
     }

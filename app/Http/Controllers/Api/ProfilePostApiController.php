@@ -20,7 +20,7 @@ class ProfilePostApiController extends Controller
      */
     public function index()
     {
-        $posts = Post::where('user_id', Auth::id())
+        $posts = Post::with('user' , 'series' , 'category')->where('user_id', Auth::id())
                     ->orderBy('created_at', 'desc')
                     ->paginate(config('pagination.perPage'));
 
