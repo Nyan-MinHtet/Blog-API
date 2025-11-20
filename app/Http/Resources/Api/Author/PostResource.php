@@ -21,10 +21,11 @@ class PostResource extends JsonResource
             'content'       => $this->content,
             'status'        => $this->status,
             'user'          => $this->whenLoaded('user' , fn($user) => $user->name),
+            'commentCount'  => $this->whenLoaded('comments', fn($comment)=> $comment->count()),
             'series'        => $this->whenLoaded('series',  fn($series) => $series->title),
             'category'      => $this->whenLoaded('category', fn($category) => $category->name),
             'createdAt'     => $this->created_at,
-            'updatedAt'    => $this->updated_at
+            'updatedAt'     => $this->updated_at
         ];
     }
 }
