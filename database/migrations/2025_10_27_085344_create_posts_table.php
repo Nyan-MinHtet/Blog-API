@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug');
             $table->text('content');
-            $table->enum('status', ['Public' , 'Private']);
+            $table->enum('status', ['Public' , 'Private'])->default('Public');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('series_id')->nullable()->references('id')->on('series')->onDelete('cascade');
             $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onDelete('cascade');

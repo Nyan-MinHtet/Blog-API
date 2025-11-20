@@ -15,7 +15,7 @@ class PostApiController extends Controller
      */
     public function index()
     {
-        $posts = Post::where('status', 'Public')
+        $posts = Post::with('user' , 'series' , 'category')->where('status', 'Public')
                     ->orderBy('created_at', 'desc')
                     ->paginate(config('pagination.perPage'));
 
@@ -30,7 +30,8 @@ class PostApiController extends Controller
     public function show(Post $post)
     {
         $this->authorize('show', $post);
-        return $this->successResponse('Post retrieved successfully!', $post, 200);
+        $post->load(['user', 'series', 'category']);
+        return $this->successResponse('Post retrieved successfully!', new PostResource($post), 200);
     }
 
   
