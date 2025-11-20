@@ -39,7 +39,8 @@ class CommentApiController extends Controller
         $validated['user_id'] = Auth::id();
         $validated['post_id'] = $request->post_id;
         $comment = Comment::create($validated);
-        return $this->successResponse(content: $comment, status: 201);
+        $comment->load('user');
+        return $this->successResponse(content: new CommentResource($comment), status: 201);
     }
 
     /**
