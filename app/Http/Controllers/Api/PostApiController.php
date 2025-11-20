@@ -30,7 +30,7 @@ class PostApiController extends Controller
     public function show(Post $post)
     {
         $this->authorize('show', $post);
-        $post->load(['user', 'series', 'category']);
+        $post->load(['user', 'series', 'category', 'comments']);
         return $this->successResponse('Post retrieved successfully!', new PostResource($post), 200);
     }
 
