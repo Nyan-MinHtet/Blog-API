@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Post;
 use App\Models\Comment;
-use Illuminate\Http\Request;
 use App\Http\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -28,16 +27,11 @@ class CommentApiController extends Controller
      */
     public function store(CommentValidateRequest $request)
     {
-        $validated = $request->validated();
-        if ($request->post_id) {
-            $post = Post::find($request->post_id);
-            if (!$post) {
-            return $this->errorResponse('Post not found!', 404);
-        }
-        }
+        $validated = array_merge($request->validated(), ['user_id' => Auth::id()]);
+        $post = Post::find($validated['post_id']);
+        
+        //if the post is being private, user cannot comment that post
         $this->authorize('addComment', $post);
-        $validated['user_id'] = Auth::id();
-        $validated['post_id'] = $request->post_id;
         $comment = Comment::create($validated);
         $comment->load('user');
         return $this->successResponse(content: new CommentResource($comment), status: 201);
