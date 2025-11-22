@@ -19,6 +19,7 @@ class AuthorResource extends JsonResource
                 'name'          => $this->name,
                 'email'         => $this->email,
                 'role'          => $this->role,
+                'suspended'     => $this->suspended,
                 'totalPublicPost'    => $this->whenLoaded(
                              'posts',
                                     fn($posts) => $posts->where('status', 'Public')->count()
