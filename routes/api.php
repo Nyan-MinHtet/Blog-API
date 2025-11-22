@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AuthorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -16,6 +17,10 @@ Route::prefix('v1/')->group(function (){
     Route::apiResource('/authors/posts/comments', CommentApiController::class)->except('index');
     Route::apiResource('/authors/profiles/posts', ProfilePostApiController::class)->except('show');
     
+});
+
+    Route::middleware(['auth:sanctum', "role.check:Admin"])->group(function () {
+    Route::apiResource('/admin/authors', AuthorController::class)->except('store');
 });
 });
 
