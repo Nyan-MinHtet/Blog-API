@@ -15,10 +15,18 @@ class AuthorResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-                'id'    => $this->id,
-                'name'  => $this->name,
-                'email' => $this->email,
-                'role'  => $this->role,
+                'id'            => $this->id,
+                'name'          => $this->name,
+                'email'         => $this->email,
+                'role'          => $this->role,
+                'totalPublicPost'    => $this->whenLoaded(
+                             'posts',
+                                    fn($posts) => $posts->where('status', 'Public')->count()
+                ),
+                'totalPrivatePost'    => $this->whenLoaded(
+                             'posts',
+                                    fn($posts) => $posts->where('status', 'Private')->count()
+                ),
         ];
     }
 }

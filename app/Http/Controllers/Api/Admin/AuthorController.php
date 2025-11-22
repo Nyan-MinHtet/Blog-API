@@ -26,10 +26,11 @@ class AuthorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $author)
     {
-        //
-    }
+        $author->load('posts');
+        return $this->successResponse(content: new AuthorResource($author));
+    } 
 
     /**
      * Update the specified resource in storage.
