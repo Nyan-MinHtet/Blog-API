@@ -19,6 +19,7 @@ class AuthorController extends Controller
         $authors = User::where('role', 'Author')
         ->orderBy('created_at', 'desc')
         ->paginate(config('pagination.perPage'));
+        $authors->load('posts');
         return $this->buildPaginatedResponse(AuthorResource::class, $authors);
     }
     
