@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['Admin' , 'Author']);
-            $table->string('suspended')->default(false);
+            $table->integer('suspended')->default(false);
             $table->string('refresh_token')->nullable();
             $table->timestamp('refresh_token_expires_at')->nullable();
             $table->rememberToken();
