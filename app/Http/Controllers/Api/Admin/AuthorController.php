@@ -3,17 +3,23 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\ApiResponse;
+use App\Http\Resources\Api\Admin\AuthorResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class AuthorController extends Controller
 {
+    use ApiResponse;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $authors = User::where('role', 'Author')
+        ->orderBy('created_at', 'desc')
+        ->paginate(config('pagination.perPage'));
+        return $this->buildPaginatedResponse(AuthorResource::class, $authors);
     }
     
     /**
