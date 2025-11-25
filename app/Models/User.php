@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status',
         'refresh_token',
         'refresh_token_expires_at'
     ];

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Helpers\ApiResponse;
-use App\Http\Resources\Api\Admin\AuthorResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Helpers\ApiResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Helpers\Admin\AuthorUpdateValidateRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\Api\Admin\AuthorResource;
 
 class AuthorController extends Controller
 {
@@ -35,9 +37,12 @@ class AuthorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(User $author , AuthorUpdateValidateRequest $request)
     {
-        //
+        $this->authorize($author);
+        $validated = $request->validated();
+        $author->update($validated);
+        return $this->successResponse(content: $author);
     }
 
     /**
