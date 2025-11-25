@@ -3,10 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\RoleCheckMiddleware;
+use App\Http\Middleware\SuspendCheckMiddleware;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Helpers\Exception\Handler\ApiExceptionResponseHelper;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -20,7 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role.check' => RoleCheckMiddleware::class
+            'role.check' => RoleCheckMiddleware::class,
+            'suspended.check' => SuspendCheckMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -40,6 +43,13 @@ return Application::configure(basePath: dirname(__DIR__))
         {
             if ($request->is('api/*')) {
                 return apiResponse(new ApiExceptionResponseHelper, 'Content not found.', 404);
+            }
+            return null;
+        });
+        $exceptions->render(function (HttpException $e, Request $request) 
+        {
+            if ($request->is('api/*')) {
+                return apiResponse(new ApiExceptionResponseHelper, $e->getMessage(), $e->getStatusCode());
             }
             return null;
         });
